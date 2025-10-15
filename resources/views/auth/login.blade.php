@@ -10,7 +10,7 @@
 
     <form method="POST" action="{{ route('login.post') }}">
         @csrf
-        <div class="card-body">
+    <div class="card-body">
             <div class="form-group">
                 <label for="email">Usuario</label>
                 <input type="text" class="form-control" id="email" name="email"
@@ -28,15 +28,10 @@
                 @enderror
             </div>
 
-            <div class="alert alert-info">
-                <strong>Cuentas de prueba:</strong><br>
-                <strong>Administrador:</strong> admin / admin1<br>
-                <strong>Usuario:</strong> usuario / usuario1
+            <div class="d-flex flex-column align-items-center mt-3">
+                <button type="submit" class="btn btn-primary mb-2" style="min-width:200px;">Iniciar Sesión</button>
+                <a href="{{ route('register') }}" class="btn btn-link">Crear cuenta</a>
             </div>
-        </div>
-
-        <div class="card-footer">
-            <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
         </div>
     </form>
 </div>

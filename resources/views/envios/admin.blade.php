@@ -9,11 +9,6 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Gestión de Envíos</h3>
-                    <div class="card-tools">
-                        <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-arrow-left mr-1"></i>Volver al Dashboard
-                        </a>
-                    </div>
                 </div>
 
                 <div class="card-body">
@@ -56,35 +51,43 @@
                                           <h6>Información de Transporte</h6>
                                           <div class="row mb-2"><div class="col-6"><strong>Sugerido:</strong></div><div class="col-6">{{ $e->transporte_sugerido }}</div></div>
                                           <div class="row mb-2"><div class="col-6"><strong>Seleccionado:</strong></div><div class="col-6">{{ $e->transporte_seleccionado }}</div></div>
-                                          <form method="POST" action="{{ route('admin.asignar-transporte', $e->id) }}">
-                                            @csrf
-                                            <div class="row mb-2"><div class="col-6"><strong>Transportista:</strong></div><div class="col-6">
-                                              <select class="form-control" name="transportista_id" required>
-                                                <option value="">Seleccionar transportista...</option>
-                                                @foreach(($transportistas ?? []) as $t)
-                                                  <option value="{{ $t->id }}">{{ $t->nombre ?? ('ID '.$t->id) }}</option>
-                                                @endforeach
-                                              </select>
-                                            </div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Vehículo:</strong></div><div class="col-6">
-                                              <select class="form-control" name="vehiculo_id" required>
-                                                <option value="">Seleccionar vehículo...</option>
-                                                @foreach(($vehiculos ?? []) as $v)
-                                                  <option value="{{ $v->id }}">{{ $v->placa ?? ('ID '.$v->id) }}</option>
-                                                @endforeach
-                                              </select>
-                                            </div></div>
-                                            <div class="text-right">
-                                              <button class="btn btn-success"><i class="fas fa-check mr-1"></i>Confirmar</button>
-                                            </div>
-                                          </form>
+                                          @if($e->estado === 'pendiente')
+                                              <form method="POST" action="{{ route('admin.asignar-transporte', $e->id) }}">
+                                                @csrf
+                                                <div class="row mb-2"><div class="col-6"><strong>Transportista:</strong></div><div class="col-6">
+                                                  <select class="form-control" name="transportista_id">
+                                                    <option value="">Seleccionar transportista...</option>
+                                                    @foreach(($transportistas ?? []) as $t)
+                                                      <option value="{{ $t->id }}">{{ $t->nombre ?? ('ID '.$t->id) }}</option>
+                                                    @endforeach
+                                                  </select>
+                                                </div></div>
+                                                <div class="row mb-2"><div class="col-6"><strong>Vehículo:</strong></div><div class="col-6">
+                                                  <select class="form-control" name="vehiculo_id">
+                                                    <option value="">Seleccionar vehículo...</option>
+                                                    @foreach(($vehiculos ?? []) as $v)
+                                                      <option value="{{ $v->id }}">{{ $v->placa ?? ('ID '.$v->id) }}</option>
+                                                    @endforeach
+                                                  </select>
+                                                </div></div>
+                                                <div class="text-right">
+                                                  <button class="btn btn-success"><i class="fas fa-check mr-1"></i>Confirmar</button>
+                                                </div>
+                                              </form>
+                                          @else
+                                              <div class="alert alert-success mb-0"><i class="fas fa-check-circle mr-1"></i> Pedido confirmado el {{ optional($e->fecha_confirmacion)->format('d/m/Y H:i') }}</div>
+                                          @endif
                                         </div>
                                       </div>
                                     </div>
                                     <div class="card-footer">
-                                      <div class="btn-group">
-                                        <a href="{{ route('envios.documento', $e->id) }}" class="btn btn-info btn-sm" target="_blank"><i class="fas fa-file-pdf"></i> Ver Documento</a>
-                                      </div>
+                                      @if($e->estado === 'confirmado')
+                                        <div class="btn-group">
+                                          <a href="{{ route('envios.documento', $e->id) }}" class="btn btn-info btn-sm" target="_blank"><i class="fas fa-file-pdf"></i> Ver Documento</a>
+                                        </div>
+                                      @else
+                                        <small class="text-muted">Documento disponible tras confirmación.</small>
+                                      @endif
                                     </div>
                                   </div>
                                 </div>

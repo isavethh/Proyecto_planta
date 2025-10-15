@@ -111,16 +111,11 @@
                                     <p>Usuarios</p>
                                 </a>
                             </li>
+                            <!-- Se eliminan Vehículos y Productos del menú -->
                             <li class="nav-item">
-                                <a href="{{ url('/admin/envios') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-car"></i>
-                                    <p>Vehículos</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ url('/admin/envios') }}" class="nav-link">
-                                    <i class="nav-icon fas fa-box"></i>
-                                    <p>Productos</p>
+                                <a href="{{ route('admin.documentos') }}" class="nav-link">
+                                    <i class="nav-icon fas fa-file-pdf"></i>
+                                    <p>Documentos</p>
                                 </a>
                             </li>
                         @else

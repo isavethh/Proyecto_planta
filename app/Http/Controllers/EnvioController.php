@@ -230,11 +230,11 @@ class EnvioController extends Controller
         }
         $envios = $query->get();
 
-        // Conteos por estado para dashboard admin
+        // Conteos por estado para dashboard admin (independientes del filtro aplicado)
         $conteos = [
-            'total' => $envios->count(),
-            'pendientes' => $envios->where('estado', Envio::ESTADO_PENDIENTE)->count(),
-            'confirmados' => $envios->where('estado', Envio::ESTADO_CONFIRMADO)->count(),
+            'total' => Envio::count(),
+            'pendientes' => Envio::where('estado', Envio::ESTADO_PENDIENTE)->count(),
+            'confirmados' => Envio::where('estado', Envio::ESTADO_CONFIRMADO)->count(),
         ];
 
         $transportistas = \App\Models\Transportista::all();
@@ -353,12 +353,35 @@ class EnvioController extends Controller
             ->orderBy('fecha_creacion', 'desc')
             ->get();
 
-        $usuario = \App\Models\Usuario::where('id', $clienteId)->first();
+        $usuario = null;
+        if (is_numeric($clienteId)) {
+            $usuario = \App\Models\Usuario::where('id', (int) $clienteId)->first();
+        }
         if (!$usuario) {
-            $usuario = (object) ['id' => $clienteId, 'nombre' => 'Usuario'];
+            $usuario = (object) [
+                'id' => $clienteId,
+                'nombre' => is_string($clienteId) ? ucfirst((string) $clienteId) : 'Usuario',
+            ];
         }
 
         return view('envios.admin-usuario-envios', compact('envios', 'usuario'));
+    }
+
+    /**
+     * Lista documentos (solo de envíos confirmados) para admin
+     */
+    public function adminDocumentos()
+    {
+        if (session('user_role') !== 'admin') {
+            abort(403);
+        }
+
+        $envios = Envio::with(['transportista','vehiculo'])
+            ->where('estado', Envio::ESTADO_CONFIRMADO)
+            ->orderBy('fecha_confirmacion', 'desc')
+            ->get();
+
+        return view('envios.admin-documentos', compact('envios'));
     }
 
     /**

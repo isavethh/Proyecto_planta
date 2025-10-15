@@ -75,5 +75,32 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
+    /**
+     * Muestra formulario de registro simple
+     */
+    public function showRegister()
+    {
+        if (session('user_id')) {
+            return redirect('/dashboard');
+        }
+        return view('auth.register');
+    }
+
+    /**
+     * Registra usuario simple y lo inicia sesión como 'usuario'
+     */
+    public function register(Request $request)
+    {
+        // Para esta versión: aceptar cualquier nombre y contraseña, y loguear como usuario demo
+        // El email se deja vacío
+        session([
+            'user_id' => 'usuario',
+            'user_name' => $request->input('nombre', 'Usuario'),
+            'user_role' => 'user',
+        ]);
+
+        return redirect('/dashboard');
+    }
 }
 

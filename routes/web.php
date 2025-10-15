@@ -12,6 +12,9 @@ Route::get('/', function () {
 // Rutas de autenticación
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+// Registro ligero que crea sesión de usuario
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Compatibilidad: permitir GET /logout
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
@@ -44,4 +47,6 @@ Route::middleware(['web'])->group(function () {
     // Administración de usuarios (listado y envíos por usuario)
     Route::get('/admin/usuarios', [EnvioController::class, 'adminUsuarios'])->middleware('role:admin')->name('admin.usuarios');
     Route::get('/admin/usuarios/{clienteId}/envios', [EnvioController::class, 'adminEnviosDeUsuario'])->middleware('role:admin')->name('admin.usuarios.envios');
+    // Documentos de envíos confirmados (admin)
+    Route::get('/admin/documentos', [EnvioController::class, 'adminDocumentos'])->middleware('role:admin')->name('admin.documentos');
 });

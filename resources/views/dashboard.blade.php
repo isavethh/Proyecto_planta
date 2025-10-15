@@ -29,29 +29,7 @@
     <!-- Estadísticas rápidas (solo para admin, usando localStorage) -->
     <div id="dash-admin-stats" class="row" style="display:none;"></div>
 
-    <!-- Información adicional para usuarios regulares -->
-    <div id="dash-user-info" class="row" style="display:none;">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Información Importante</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-map-marker-alt text-primary"></i> Dirección de Planta</h5>
-                            <p class="text-muted">Planta Central - Calle Principal 123, Ciudad Industrial</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h5><i class="fas fa-clipboard-check text-success"></i> Tus pedidos</h5>
-                            <p class="text-muted mb-2">Aquí te mostraremos tus pedidos creados y su estado.</p>
-                            <a href="{{ url('mis-envios') }}" class="btn btn-sm btn-outline-primary">Ver mis envíos</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Se eliminó el bloque de "Tus pedidos" para un dashboard más limpio -->
 </div>
 @endsection
 
