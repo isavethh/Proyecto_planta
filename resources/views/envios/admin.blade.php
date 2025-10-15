@@ -17,6 +17,13 @@
                 </div>
 
                 <div class="card-body">
+                    @isset($conteos)
+                    <div class="row mb-4">
+                        <div class="col-md-4"><a href="{{ route('admin.envios') }}" class="text-reset"><div class="info-box bg-info"><span class="info-box-icon"><i class="fas fa-truck"></i></span><div class="info-box-content"><span class="info-box-text">Total Envíos</span><span class="info-box-number">{{ $conteos['total'] }}</span></div></div></a></div>
+                        <div class="col-md-4"><a href="{{ route('admin.envios',[ 'estado' => 'pendiente' ]) }}" class="text-reset"><div class="info-box bg-warning"><span class="info-box-icon"><i class="fas fa-clock"></i></span><div class="info-box-content"><span class="info-box-text">Pendientes</span><span class="info-box-number">{{ $conteos['pendientes'] }}</span></div></div></a></div>
+                        <div class="col-md-4"><a href="{{ route('admin.envios',[ 'estado' => 'confirmado' ]) }}" class="text-reset"><div class="info-box bg-success"><span class="info-box-icon"><i class="fas fa-check"></i></span><div class="info-box-content"><span class="info-box-text">Confirmados</span><span class="info-box-number">{{ $conteos['confirmados'] }}</span></div></div></a></div>
+                    </div>
+                    @endisset
                     @php $list = $envios ?? collect(); @endphp
                     @if($list->isEmpty())
                         <div class="text-center py-5"><i class="fas fa-inbox fa-4x text-muted mb-3"></i><h4>No hay envíos para gestionar</h4><p class="text-muted">Los nuevos pedidos aparecerán aquí cuando los clientes creen envíos.</p></div>

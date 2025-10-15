@@ -222,14 +222,41 @@ class EnvioController extends Controller
             abort(403);
         }
 
-        $envios = Envio::with(['transportista', 'vehiculo'])
-                      ->orderBy('fecha_creacion', 'desc')
-                      ->get();
+        $query = Envio::with(['transportista', 'vehiculo'])
+            ->orderBy('fecha_creacion', 'desc');
+        $estado = request('estado');
+        if ($estado === Envio::ESTADO_PENDIENTE || $estado === Envio::ESTADO_CONFIRMADO) {
+            $query->where('estado', $estado);
+        }
+        $envios = $query->get();
+
+        // Conteos por estado para dashboard admin
+        $conteos = [
+            'total' => $envios->count(),
+            'pendientes' => $envios->where('estado', Envio::ESTADO_PENDIENTE)->count(),
+            'confirmados' => $envios->where('estado', Envio::ESTADO_CONFIRMADO)->count(),
+        ];
 
         $transportistas = \App\Models\Transportista::all();
         $vehiculos = \App\Models\Vehiculo::all();
 
-        return view('envios.admin', compact('envios', 'transportistas', 'vehiculos'));
+        // Hardcode de fallback si no existen registros
+        if ($transportistas->isEmpty()) {
+            $transportistas = collect([
+                (object)['id' => 1, 'nombre' => 'Juan Pérez'],
+                (object)['id' => 2, 'nombre' => 'María García'],
+                (object)['id' => 3, 'nombre' => 'Luis Fernández'],
+            ]);
+        }
+        if ($vehiculos->isEmpty()) {
+            $vehiculos = collect([
+                (object)['id' => 1, 'placa' => 'ABC-123'],
+                (object)['id' => 2, 'placa' => 'XYZ-789'],
+                (object)['id' => 3, 'placa' => 'JKL-456'],
+            ]);
+        }
+
+        return view('envios.admin', compact('envios', 'transportistas', 'vehiculos', 'conteos'));
     }
 
     /**
@@ -254,6 +281,51 @@ class EnvioController extends Controller
         ]);
 
         return redirect()->route('admin.envios')->with('success', 'Envío confirmado exitosamente');
+    }
+
+    /**
+     * Lista usuarios para administración (simplificado: obtiene IDs únicos en envíos y el usuario hardcodeado)
+     */
+    public function adminUsuarios()
+    {
+        if (session('user_role') !== 'admin') {
+            abort(403);
+        }
+
+        // Usuarios desde tabla usuarios si existen, si no, armar desde envíos y usuario hardcodeado
+        $usuarios = \App\Models\Usuario::select('id', 'nombre', 'email')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if ($usuarios->isEmpty()) {
+            $ids = Envio::select('cliente_id')->distinct()->pluck('cliente_id');
+            $usuarios = $ids->map(function ($id) {
+                return (object) ['id' => (string) $id, 'nombre' => 'Usuario', 'email' => 'usuario@example.com'];
+            });
+        }
+
+        return view('envios.admin-usuarios', compact('usuarios'));
+    }
+
+    /**
+     * Muestra envíos de un usuario específico para admin
+     */
+    public function adminEnviosDeUsuario(string $clienteId)
+    {
+        if (session('user_role') !== 'admin') {
+            abort(403);
+        }
+
+        $envios = Envio::where('cliente_id', $clienteId)
+            ->orderBy('fecha_creacion', 'desc')
+            ->get();
+
+        $usuario = \App\Models\Usuario::where('id', $clienteId)->first();
+        if (!$usuario) {
+            $usuario = (object) ['id' => $clienteId, 'nombre' => 'Usuario'];
+        }
+
+        return view('envios.admin-usuario-envios', compact('envios', 'usuario'));
     }
 
     /**

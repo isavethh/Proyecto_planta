@@ -49,10 +49,10 @@
                                     <h5 class="card-title">Información del Pedido</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row mb-2"><div class="col-6"><strong>Número de Pedido:</strong></div><div id="doc-numero" class="col-6">#-</div></div>
-                                    <div class="row mb-2"><div class="col-6"><strong>Fecha de Creación:</strong></div><div id="doc-creacion" class="col-6">-</div></div>
-                                    <div class="row mb-2"><div class="col-6"><strong>Fecha de Confirmación:</strong></div><div id="doc-confirmacion" class="col-6">-</div></div>
-                                    <div class="row mb-2"><div class="col-6"><strong>Estado:</strong></div><div class="col-6"><span id="doc-estado-pill" class="badge badge-warning">Pendiente</span></div></div>
+                                    <div class="row mb-2"><div class="col-6"><strong>Número de Pedido:</strong></div><div class="col-6">#{{ ($envio->id ?? '-') }}</div></div>
+                                    <div class="row mb-2"><div class="col-6"><strong>Fecha de Creación:</strong></div><div class="col-6">{{ optional($envio->created_at ?? $envio->fecha_creacion ?? null)->format('d/m/Y H:i') }}</div></div>
+                                    <div class="row mb-2"><div class="col-6"><strong>Fecha de Confirmación:</strong></div><div class="col-6">{{ optional($envio->fecha_confirmacion ?? null)->format('d/m/Y H:i') ?? '-' }}</div></div>
+                                    <div class="row mb-2"><div class="col-6"><strong>Estado:</strong></div><div class="col-6"><span class="badge badge-{{ ($envio->estado==='confirmado'?'success':'warning') }}">{{ ucfirst($envio->estado ?? 'pendiente') }}</span></div></div>
                                 </div>
                             </div>
                         </div>
@@ -68,17 +68,17 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <strong>ID de Cliente:</strong> <span id="doc-cliente-id">-</span><br>
-                                            <strong>Cliente:</strong> <span id="doc-cliente-nombre">Usuario</span>
+                                            <strong>ID de Cliente:</strong> <span>{{ $envio->cliente_id ?? '-' }}</span><br>
+                                            <strong>Cliente:</strong> <span>{{ session('user_name') ?? 'Usuario' }}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <strong>Dirección de Origen:</strong><br>
                                             Planta Central - Calle Principal 123, Ciudad Industrial
                                             <br>
                                             <strong>Destino:</strong>
-                                            <div id="doc-destino">-</div>
+                                            <div>{{ $envio->destino_direccion ?? '-' }}</div>
                                             <br>
-                                            <strong>Entrega Deseada:</strong> <span id="doc-entrega">-</span>
+                                            <strong>Entrega Deseada:</strong> <span>{{ optional($envio->fecha_entrega_deseada ?? null)->format('d/m/Y H:i') ?? '-' }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -97,19 +97,19 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <strong>Categoría:</strong><br>
-                                            <span id="doc-categoria">-</span>
+                                            <span>{{ ucfirst($envio->categoria_producto ?? '-') }}</span>
                                         </div>
                                         <div class="col-md-3">
                                             <strong>Producto:</strong><br>
-                                            <span id="doc-producto">-</span>
+                                            <span>{{ $envio->producto ?? '-' }}</span>
                                         </div>
                                         <div class="col-md-3">
                                             <strong>Peso por Unidad:</strong><br>
-                                            <span id="doc-peso-unidad">-</span> kg
+                                            <span>{{ number_format((float)($envio->peso_producto_unidad ?? 0), 2) }}</span> kg
                                         </div>
                                         <div class="col-md-3">
                                             <strong>Unidades Totales:</strong><br>
-                                            <span id="doc-unidades">-</span>
+                                            <span>{{ (int)($envio->unidades_totales ?? 0) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -128,22 +128,22 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <strong>Transporte Sugerido:</strong><br>
-                                            <span id="doc-transporte-sugerido">-</span>
+                                            <span>{{ $envio->transporte_sugerido ?? '-' }}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <strong>Transporte Seleccionado:</strong><br>
-                                            <span id="doc-transporte-seleccionado">-</span>
+                                            <span>{{ \App\Models\Envio::TRANSPORTES_DISPONIBLES[$envio->transporte_seleccionado] ?? ($envio->transporte_seleccionado ?? '-') }}</span>
                                         </div>
                                     </div>
 
                                     <div class="row mt-3">
                                         <div class="col-md-6">
                                             <strong>Transportista Asignado:</strong><br>
-                                            <span id="doc-transportista">No asignado</span>
+                                            <span>{{ optional($envio->transportista)->nombre ?? 'No asignado' }}</span>
                                         </div>
                                         <div class="col-md-6">
                                             <strong>Vehículo Asignado:</strong><br>
-                                            <span id="doc-vehiculo">No asignado</span>
+                                            <span>{{ optional($envio->vehiculo)->placa ?? 'No asignado' }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -160,9 +160,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4"><div class="info-box bg-light"><div class="info-box-content"><span class="info-box-text">Precio por Unidad</span><span id="doc-precio-unidad" class="info-box-number">$-</span></div></div></div>
-                                        <div class="col-md-4"><div class="info-box bg-light"><div class="info-box-content"><span class="info-box-text">Cantidad</span><span id="doc-cantidad" class="info-box-number">-</span></div></div></div>
-                                        <div class="col-md-4"><div class="info-box bg-success"><div class="info-box-content"><span class="info-box-text">Total a Pagar</span><span id="doc-total" class="info-box-number">Bs -</span></div></div></div>
+                                        <div class="col-md-4"><div class="info-box bg-light"><div class="info-box-content"><span class="info-box-text">Precio por Unidad</span><span class="info-box-number">Bs {{ number_format((float)($envio->precio_producto ?? 0), 2) }}</span></div></div></div>
+                                        <div class="col-md-4"><div class="info-box bg-light"><div class="info-box-content"><span class="info-box-text">Cantidad</span><span class="info-box-number">{{ (int)($envio->unidades_totales ?? 0) }}</span></div></div></div>
+                                        <div class="col-md-4"><div class="info-box bg-success"><div class="info-box-content"><span class="info-box-text">Total a Pagar</span><span class="info-box-number">Bs {{ number_format((float)($envio->precio_producto ?? 0) * (int)($envio->unidades_totales ?? 0), 2) }}</span></div></div></div>
                                     </div>
 
                                     <div class="alert alert-info mt-3">
@@ -255,49 +255,5 @@
 @endsection
 
 @section('js')
-<script>
-$(function(){
-  function obtenerEnvios(){ try { return JSON.parse(localStorage.getItem('envios')||'[]'); } catch(e){ return []; } }
-  function nombreTransporte(key){ const map={ small:'Camión Pequeño', medium:'Camión Mediano', large:'Camión Grande', refrigerated:'Camión Refrigerado', air:'Avión de Carga', ship:'Transporte Marítimo' }; return map[key]||'No asignado'; }
-
-  const envioId = parseInt(localStorage.getItem('envioActual'), 10);
-  const envios = obtenerEnvios();
-  const e = envios.find(x=>x.id===envioId) || envios[0];
-  if(!e){ return; }
-
-  const fecha = e.fecha_creacion ? new Date(e.fecha_creacion) : new Date();
-  $('#doc-title').text(`Documento de Pedido #${e.id}`);
-  $('#doc-numero').text(`#${e.id}`);
-  $('#doc-creacion').text(`${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`);
-  $('#doc-confirmacion').text(e.fecha_confirmacion ? new Date(e.fecha_confirmacion).toLocaleString() : '-');
-
-  $('#doc-categoria').text((e.categoria_producto||'-'));
-  $('#doc-producto').text(e.producto||'-');
-  $('#doc-peso-unidad').text((e.peso_producto_unidad||0).toFixed(2));
-  $('#doc-unidades').text(e.unidades_totales||0);
-  $('#doc-precio-unidad').text(`Bs ${(e.precio_producto||0).toFixed(2)}`);
-  $('#doc-cantidad').text(e.unidades_totales||0);
-  const total=(e.precio_producto||0)*(e.unidades_totales||0);
-  $('#doc-total').text(`Bs ${total.toFixed(2)}`);
-  // Entrega deseada
-  const entrega = e.fecha_entrega_deseada ? new Date(e.fecha_entrega_deseada).toLocaleString() : '-';
-  if(document.getElementById('doc-entrega')){
-    document.getElementById('doc-entrega').textContent = entrega;
-  }
-
-  $('#doc-transporte-sugerido').text(e.transporte_sugerido||'-');
-  $('#doc-transporte-seleccionado').text(nombreTransporte(e.transporte_seleccionado));
-  $('#doc-transportista').text(e.transportista||'No asignado');
-  $('#doc-vehiculo').text(e.vehiculo||'No asignado');
-  $('#doc-destino').text(e.destino_direccion || '-');
-
-  const estado = e.estado||'pendiente';
-  const badge = estado==='confirmado' ? 'success' : 'warning';
-  $('#doc-estado').removeClass('badge-warning badge-success').addClass(`badge-${badge}`).text(estado.charAt(0).toUpperCase()+estado.slice(1));
-  $('#doc-estado-pill').removeClass('badge-warning badge-success').addClass(`badge-${badge}`).text(estado.charAt(0).toUpperCase()+estado.slice(1));
-  $('#doc-pendiente').toggle(estado==='pendiente');
-  $('#doc-confirmado').toggle(estado==='confirmado');
-});
-</script>
 @endsection
 

@@ -70,12 +70,9 @@
             <ul class="navbar-nav ml-auto">
                 @if(session('user_id'))
                 <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="fas fa-sign-out-alt mr-1"></i> Cerrar sesión
-                        </button>
-                    </form>
+                    <a href="{{ route('logout.get') }}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Cerrar sesión
+                    </a>
                 </li>
                 @endif
             </ul>
@@ -109,7 +106,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('/admin/envios') }}" class="nav-link">
+                                <a href="{{ route('admin.usuarios') }}" class="nav-link">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>Usuarios</p>
                                 </a>

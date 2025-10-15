@@ -13,6 +13,8 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Compatibilidad: permitir GET /logout
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
 
 // Rutas principales con backend ligero
 Route::middleware(['web'])->group(function () {
@@ -39,4 +41,7 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('/admin/envios', [EnvioController::class, 'adminIndex'])->middleware('role:admin')->name('admin.envios');
     Route::post('/admin/envios/{envio}/asignar-transporte', [EnvioController::class, 'asignarTransporte'])->middleware('role:admin')->name('admin.asignar-transporte');
+    // Administración de usuarios (listado y envíos por usuario)
+    Route::get('/admin/usuarios', [EnvioController::class, 'adminUsuarios'])->middleware('role:admin')->name('admin.usuarios');
+    Route::get('/admin/usuarios/{clienteId}/envios', [EnvioController::class, 'adminEnviosDeUsuario'])->middleware('role:admin')->name('admin.usuarios.envios');
 });
