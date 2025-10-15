@@ -1,0 +1,27 @@
+/* AdminLTE CSS */
+@import url('../../public/vendor/adminlte/dist/css/adminlte.min.css');
+
+/* Bootstrap CSS */
+@import url('../../public/vendor/bootstrap/css/bootstrap.min.css');
+
+/* FontAwesome CSS */
+@import url('../../public/vendor/fontawesome-free/css/all.min.css');
+
+/* Custom styles */
+body {
+    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.main-sidebar {
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        margin-left: 0;
+    }
+}

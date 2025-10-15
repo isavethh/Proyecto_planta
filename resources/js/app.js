@@ -1,0 +1,8 @@
+import './bootstrap';
+
+
+import 'admin-lte';
+
+// estilos
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'admin-lte/dist/css/adminlte.min.css';
