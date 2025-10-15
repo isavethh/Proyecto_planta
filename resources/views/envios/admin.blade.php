@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="card-body">
-                    @php($list = $envios ?? collect())
+                    @php $list = $envios ?? collect(); @endphp
                     @if($list->isEmpty())
                         <div class="text-center py-5"><i class="fas fa-inbox fa-4x text-muted mb-3"></i><h4>No hay envíos para gestionar</h4><p class="text-muted">Los nuevos pedidos aparecerán aquí cuando los clientes creen envíos.</p></div>
                     @else
