@@ -29,12 +29,33 @@
                             </div>
                         </div>
 
-                        <!-- Categoría del producto -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <!-- Ítems del pedido (múltiples productos) -->
+                        <div class="row mb-2">
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <h5 class="mb-0"><i class="fas fa-box mr-2"></i>Productos del Pedido</h5>
+                                <button type="button" id="btn-add-item" class="btn btn-success btn-sm">
+                                    <i class="fas fa-plus mr-1"></i>Agregar otro producto
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="items-container">
+                            <div class="card card-outline card-secondary mb-3 item-card" data-index="0">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center" style="gap:.5rem">
+                                        <span class="badge badge-secondary">Ítem <span class="item-number">1</span></span>
+                                        <small class="text-muted">Ingrese categoría, producto, peso, unidades y precio por unidad</small>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-item" style="display:none">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="categoria_producto">Categoría del Producto <span class="text-danger">*</span></label>
-                                    <select class="form-control" id="categoria_producto" name="categoria_producto" required>
+                                                <label>Categoría <span class="text-danger">*</span></label>
+                                                <select class="form-control item-categoria" name="items[0][categoria_producto]" required>
                                         <option value="">Seleccionar categoría...</option>
                                         <option value="alimentos">Alimentos</option>
                                         <option value="medicinas">Medicinas</option>
@@ -44,29 +65,36 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <!-- Producto -->
-                            <div class="col-md-6">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Producto <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control item-producto" name="items[0][producto]" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="producto">Producto <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="producto" name="producto" required>
+                                                <label>Precio por Unidad (Bs) <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend"><span class="input-group-text">Bs</span></div>
+                                                    <input type="number" step="0.01" class="form-control item-precio" name="items[0][precio_producto]" placeholder="Ej.: 120.50" required>
+                                                </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Peso y unidades -->
-                        <div class="row mb-3">
+                                    <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="peso_producto_unidad">Peso por Unidad (kg) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" class="form-control" id="peso_producto_unidad" name="peso_producto_unidad" required>
+                                                <label>Peso por Unidad (kg) <span class="text-danger">*</span></label>
+                                                <input type="number" step="0.01" class="form-control item-peso" name="items[0][peso_producto_unidad]" required>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="unidades_totales">Número de Unidades <span class="text-danger">*</span></label>
-                                    <input type="number" min="1" class="form-control" id="unidades_totales" name="unidades_totales" required>
+                                                <label>Número de Unidades <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" class="form-control item-unidades" name="items[0][unidades_totales]" required>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +106,7 @@
                                     <label>Transporte Sugerido</label>
                                     <div class="alert alert-warning">
                                         <i class="fas fa-info-circle mr-2"></i>
-                                        <span id="transporte_sugerido_text">Se calculará basado en categoría y peso total</span>
+                                        <span id="transporte_sugerido_text">Se calculará basado en categorías y peso total</span>
                                     </div>
                                 </div>
                             </div>
@@ -100,18 +128,8 @@
                             </div>
                         </div>
 
-                        <!-- Precio del producto (BOB) y fecha/hora de entrega -->
+                        <!-- Fecha/hora de entrega (única para todo el pedido) -->
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="precio_producto">Precio por Unidad (Bs) <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend"><span class="input-group-text">Bs</span></div>
-                                        <input type="number" step="0.01" class="form-control" id="precio_producto" name="precio_producto" placeholder="Ej.: 120.50" required>
-                                    </div>
-                                    <small class="form-text text-muted">Moneda: Bolivianos (BOB)</small>
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="fecha_entrega_deseada">Fecha y Hora de Entrega Deseada</label>
@@ -194,6 +212,11 @@
                                                 <span id="resumen_distancia">-</span>
                                             </div>
                                         </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <small class="text-muted">Moneda: Bolivianos (BOB)</small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -257,34 +280,45 @@
 })();
 
 $(document).ready(function() {
-    function calcularResumen() {
-        const pesoUnidad = parseFloat($('#peso_producto_unidad').val()) || 0;
-        const unidades = parseInt($('#unidades_totales').val()) || 0;
-        const precioUnidad = parseFloat($('#precio_producto').val()) || 0;
-
-        const pesoTotal = pesoUnidad * unidades;
-        const precioTotal = precioUnidad * unidades;
-
-        $('#resumen_unidades').text(unidades);
-        $('#resumen_peso').text(pesoTotal.toFixed(2) + ' kg');
-        $('#resumen_precio').text('Bs ' + precioTotal.toFixed(2));
-
-        const transporteSeleccionadoKey = $('#transporte_seleccionado').val();
-        $('#resumen_transporte').text(nombreTransporte(transporteSeleccionadoKey) || '-');
-
-        // Calcular transporte sugerido
-        const sugerido = calcularTransporteSugerido();
-        resaltarSugerido(sugerido.key);
+    function leerItems() {
+        const items = [];
+        $('#items-container .item-card').each(function(){
+            const card = $(this);
+            items.push({
+                categoria_producto: card.find('.item-categoria').val() || '',
+                producto: card.find('.item-producto').val() || '',
+                peso_producto_unidad: parseFloat(card.find('.item-peso').val()) || 0,
+                unidades_totales: parseInt(card.find('.item-unidades').val()) || 0,
+                precio_producto: parseFloat(card.find('.item-precio').val()) || 0
+            });
+        });
+        return items;
     }
 
-    function calcularTransporteSugerido() {
-        const categoria = $('#categoria_producto').val();
-        const pesoTotal = (parseFloat($('#peso_producto_unidad').val()) || 0) *
-                         (parseInt($('#unidades_totales').val()) || 0);
+    function calcularResumen() {
+        const items = leerItems();
+        let totalUnidades = 0, totalPeso = 0, totalPrecio = 0;
+        let tieneFrio = false;
+        for (const it of items) {
+            totalUnidades += it.unidades_totales;
+            totalPeso += it.peso_producto_unidad * it.unidades_totales;
+            totalPrecio += it.precio_producto * it.unidades_totales;
+            if (it.categoria_producto === 'alimentos' || it.categoria_producto === 'medicinas') tieneFrio = true;
+        }
+        $('#resumen_unidades').text(totalUnidades);
+        $('#resumen_peso').text(totalPeso.toFixed(2) + ' kg');
+        $('#resumen_precio').text('Bs ' + totalPrecio.toFixed(2));
 
+        const sugerido = calcularTransporteSugerido(items, totalPeso);
+        resaltarSugerido(sugerido.key);
+        const seleccionadoKey = $('#transporte_seleccionado').val();
+        $('#resumen_transporte').text(nombreTransporte(seleccionadoKey) || '-');
+    }
+
+    function calcularTransporteSugerido(items, pesoTotal) {
         let key = 'camion_pequeno';
-
-        if (categoria === 'alimentos' || categoria === 'medicinas') {
+        const tieneFrio = items.some(it => it.categoria_producto === 'alimentos' || it.categoria_producto === 'medicinas');
+        if (tieneFrio) {
             key = 'camion_refrigerado';
         } else if (pesoTotal > 1000) {
             key = 'camion_grande';
@@ -294,15 +328,102 @@ $(document).ready(function() {
             key = 'camion_pequeno';
         }
         const label = nombreTransporte(key);
-
         $('#transporte_sugerido_text').text(label);
         $('#chip-ayuda').text('Haz clic para seleccionar. Sugerido: ' + label);
         return { key, label };
     }
 
-    $('#categoria_producto, #peso_producto_unidad, #unidades_totales, #precio_producto').on('change input', calcularResumen);
+    function renumerarItems() {
+        $('#items-container .item-card').each(function(index){
+            const card = $(this);
+            card.attr('data-index', index);
+            card.find('.item-number').text(index + 1);
+            card.find('.item-categoria').attr('name', `items[${index}][categoria_producto]`);
+            card.find('.item-producto').attr('name', `items[${index}][producto]`);
+            card.find('.item-peso').attr('name', `items[${index}][peso_producto_unidad]`);
+            card.find('.item-unidades').attr('name', `items[${index}][unidades_totales]`);
+            card.find('.item-precio').attr('name', `items[${index}][precio_producto]`);
+        });
+        // Mostrar botón eliminar solo si hay más de 1 ítem
+        const many = $('#items-container .item-card').length > 1;
+        $('#items-container .item-card .btn-remove-item').toggle(many);
+    }
+
+    $('#btn-add-item').on('click', function(){
+        const index = $('#items-container .item-card').length;
+        const $tpl = $(
+            `<div class="card card-outline card-secondary mb-3 item-card" data-index="${index}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center" style="gap:.5rem">
+                        <span class="badge badge-secondary">Ítem <span class="item-number">${index+1}</span></span>
+                        <small class="text-muted">Ingrese categoría, producto, peso, unidades y precio por unidad</small>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-item">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Categoría <span class="text-danger">*</span></label>
+                                <select class="form-control item-categoria" name="items[${index}][categoria_producto]" required>
+                                    <option value="">Seleccionar categoría...</option>
+                                    <option value="alimentos">Alimentos</option>
+                                    <option value="medicinas">Medicinas</option>
+                                    <option value="electronica">Electrónica</option>
+                                    <option value="ropa">Ropa</option>
+                                    <option value="otros">Otros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Producto <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control item-producto" name="items[${index}][producto]" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Precio por Unidad (Bs) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text">Bs</span></div>
+                                    <input type="number" step="0.01" class="form-control item-precio" name="items[${index}][precio_producto]" placeholder="Ej.: 120.50" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Peso por Unidad (kg) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control item-peso" name="items[${index}][peso_producto_unidad]" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Número de Unidades <span class="text-danger">*</span></label>
+                                <input type="number" min="1" class="form-control item-unidades" name="items[${index}][unidades_totales]" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`);
+        $('#items-container').append($tpl);
+        renumerarItems();
+        calcularResumen();
+    });
+
+    $(document).on('click', '.btn-remove-item', function(){
+        $(this).closest('.item-card').remove();
+        renumerarItems();
+        calcularResumen();
+    });
+
+    $(document).on('input change', '.item-categoria, .item-producto, .item-peso, .item-unidades, .item-precio', calcularResumen);
 
     // Calcular inicialmente
+    renumerarItems();
     calcularResumen();
 
     function obtenerEnvios() {
@@ -315,7 +436,9 @@ $(document).ready(function() {
 
     $('#form-crear-envio').on('submit', function(e) {
         e.preventDefault();
-        const sugerido = calcularTransporteSugerido();
+        const items = leerItems();
+        const pesoTotal = items.reduce((acc, it) => acc + (it.peso_producto_unidad * it.unidades_totales), 0);
+        const sugerido = calcularTransporteSugerido(items, pesoTotal);
         let transporteSeleccionadoKey = $('#transporte_seleccionado').val();
         const direccionDestino = $('#direccion_destino').val();
         const destinoLat = parseFloat($('#destino_lat').val()) || null;
@@ -323,8 +446,14 @@ $(document).ready(function() {
         const distanciaKm = parseFloat($('#resumen_distancia').data('km')) || null;
         if(!destinoLat || !destinoLng){ alert('Selecciona un destino en el mapa o con el buscador.'); return; }
         if(!transporteSeleccionadoKey){ transporteSeleccionadoKey = sugerido.key; $('#transporte_seleccionado').val(sugerido.key); }
-        const unidades = parseInt($('#unidades_totales').val())||0; const precioUnidad = parseFloat($('#precio_producto').val())||0;
-        if(unidades<=0 || precioUnidad<=0){ alert('Completa unidades y precio por unidad.'); return; }
+        // Validar que todos los ítems tengan datos
+        if(items.length === 0){ alert('Agrega al menos un producto.'); return; }
+        for(const it of items){
+            if(!it.categoria_producto || !it.producto || it.peso_producto_unidad<=0 || it.unidades_totales<=0 || it.precio_producto<=0){
+                alert('Completa todos los campos de cada producto.');
+                return;
+            }
+        }
         // Asignar campos ocultos para enviar al backend
         $('#destino_direccion_input').val(direccionDestino);
         $('#distancia_km_input').val(distanciaKm || '');

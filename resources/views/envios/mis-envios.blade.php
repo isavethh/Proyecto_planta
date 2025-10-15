@@ -36,8 +36,21 @@
                         <div class="row">
                             @foreach($collection as $e)
                                 @php
-                                    $pesoTotal = (float)($e->peso_producto_unidad ?? 0) * (int)($e->unidades_totales ?? 0);
-                                    $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                                    // Totales considerando items si existen
+                                    $items = is_array($e->items ?? null) ? $e->items : [];
+                                    if (count($items) > 0) {
+                                        $pesoTotal = 0; $precioTotal = 0; $unidadesTotal = 0;
+                                        foreach ($items as $it) {
+                                            $unidades = (int)($it['unidades_totales'] ?? 0);
+                                            $pesoTotal += (float)($it['peso_producto_unidad'] ?? 0) * $unidades;
+                                            $precioTotal += (float)($it['precio_producto'] ?? 0) * $unidades;
+                                            $unidadesTotal += $unidades;
+                                        }
+                                    } else {
+                                        $pesoTotal = (float)($e->peso_producto_unidad ?? 0) * (int)($e->unidades_totales ?? 0);
+                                        $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                                        $unidadesTotal = (int)($e->unidades_totales ?? 0);
+                                    }
                                     $estadoClass = $e->estado === 'confirmado' ? 'success' : ($e->estado === 'pendiente' ? 'warning' : 'info');
                                     $map = \App\Models\Envio::TRANSPORTES_DISPONIBLES;
                                     $transKey = $e->transporte_seleccionado;
@@ -55,9 +68,9 @@
                                             </h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="row mb-2"><div class="col-6"><strong>Producto:</strong></div><div class="col-6">{{ $e->producto }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Categoría:</strong></div><div class="col-6">{{ ucfirst($e->categoria_producto) }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $e->unidades_totales }}</div></div>
+                                            <div class="row mb-2"><div class="col-6"><strong>Producto:</strong></div><div class="col-6">{{ (is_array($e->items ?? null) && count($e->items)>0) ? (count($e->items) . ' productos') : ($e->producto) }}</div></div>
+                                            <div class="row mb-2"><div class="col-6"><strong>Categoría:</strong></div><div class="col-6">{{ (is_array($e->items ?? null) && count($e->items)>0) ? 'Múltiples' : ucfirst($e->categoria_producto) }}</div></div>
+                                            <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $unidadesTotal }}</div></div>
                                             <div class="row mb-2"><div class="col-6"><strong>Peso Total:</strong></div><div class="col-6">{{ number_format($pesoTotal, 2) }} kg</div></div>
                                             <div class="row mb-2"><div class="col-6"><strong>Precio Total:</strong></div><div class="col-6">Bs {{ number_format($precioTotal, 2) }}</div></div>
                                             <div class="row mb-2"><div class="col-6"><strong>Entrega Deseada:</strong></div><div class="col-6">{{ $fechaEntrega }}</div></div>

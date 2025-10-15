@@ -20,7 +20,18 @@
             <div class="row">
               @foreach($envios as $e)
                 @php
-                  $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                  $items = is_array($e->items ?? null) ? $e->items : [];
+                  if (count($items) > 0) {
+                    $precioTotal = 0; $unidadesTotal = 0;
+                    foreach ($items as $it) {
+                      $u = (int)($it['unidades_totales'] ?? 0);
+                      $precioTotal += (float)($it['precio_producto'] ?? 0) * $u;
+                      $unidadesTotal += $u;
+                    }
+                  } else {
+                    $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                    $unidadesTotal = (int)($e->unidades_totales ?? 0);
+                  }
                 @endphp
                 <div class="col-md-6 col-lg-4 mb-4">
                   <div class="card card-success card-outline">
@@ -29,8 +40,8 @@
                       <span class="badge badge-success">Confirmado</span>
                     </div>
                     <div class="card-body">
-                      <div class="row mb-2"><div class="col-6"><strong>Producto:</strong></div><div class="col-6">{{ $e->producto }}</div></div>
-                      <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $e->unidades_totales }}</div></div>
+                      <div class="row mb-2"><div class="col-6"><strong>Productos:</strong></div><div class="col-6">{{ (count($items)>0) ? (count($items).' productos') : $e->producto }}</div></div>
+                      <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $unidadesTotal }}</div></div>
                       <div class="row mb-2"><div class="col-6"><strong>Total:</strong></div><div class="col-6">Bs {{ number_format($precioTotal, 2) }}</div></div>
                       <div class="row mb-2"><div class="col-6"><strong>Confirmado:</strong></div><div class="col-6">{{ optional($e->fecha_confirmacion)->format('d/m/Y H:i') }}</div></div>
                     </div>

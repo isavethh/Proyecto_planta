@@ -43,6 +43,7 @@ class Envio extends Model
         'transporte_seleccionado',
         'estado',
         'precio_producto',
+        'items',
         'fecha_creacion',
         'fecha_confirmacion',
         'fecha_entrega_deseada',
@@ -57,7 +58,8 @@ class Envio extends Model
         'peso_producto_unidad' => 'decimal:2',
         'precio_producto' => 'decimal:2',
         'unidades_totales' => 'integer',
-        'fecha_entrega_deseada' => 'datetime'
+        'fecha_entrega_deseada' => 'datetime',
+        'items' => 'array'
     ];
 
     /**
@@ -120,7 +122,50 @@ class Envio extends Model
      */
     public function getPrecioTotalAttribute()
     {
-        return $this->precio_producto * $this->unidades_totales;
+        // Si existen items, sumar total de cada item (precioUnidad * unidades)
+        if (is_array($this->items) && !empty($this->items)) {
+            $sum = 0.0;
+            foreach ($this->items as $it) {
+                $precioUnidad = isset($it['precio_producto']) ? (float) $it['precio_producto'] : 0.0;
+                $unidades = isset($it['unidades_totales']) ? (int) $it['unidades_totales'] : 0;
+                $sum += $precioUnidad * $unidades;
+            }
+            return $sum;
+        }
+        // Fallback al esquema anterior
+        return (float) $this->precio_producto * (int) $this->unidades_totales;
+    }
+
+    /**
+     * Calcula peso total considerando items si existen.
+     */
+    public function getPesoTotalAttribute()
+    {
+        if (is_array($this->items) && !empty($this->items)) {
+            $sum = 0.0;
+            foreach ($this->items as $it) {
+                $pesoUnidad = isset($it['peso_producto_unidad']) ? (float) $it['peso_producto_unidad'] : 0.0;
+                $unidades = isset($it['unidades_totales']) ? (int) $it['unidades_totales'] : 0;
+                $sum += $pesoUnidad * $unidades;
+            }
+            return $sum;
+        }
+        return (float) $this->peso_producto_unidad * (int) $this->unidades_totales;
+    }
+
+    /**
+     * Calcula unidades totales considerando items si existen.
+     */
+    public function getUnidadesTotalizadasAttribute()
+    {
+        if (is_array($this->items) && !empty($this->items)) {
+            $sum = 0;
+            foreach ($this->items as $it) {
+                $sum += isset($it['unidades_totales']) ? (int) $it['unidades_totales'] : 0;
+            }
+            return $sum;
+        }
+        return (int) $this->unidades_totales;
     }
 
     /**

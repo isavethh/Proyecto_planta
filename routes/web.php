@@ -43,6 +43,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/documento-pedido', function(){ return redirect()->route('envios.mis.documentos'); })->name('envios.documento.blank');
 
     Route::get('/admin/envios', [EnvioController::class, 'adminIndex'])->middleware('role:admin')->name('admin.envios');
+    Route::get('/admin/envios/{envio}', [EnvioController::class, 'adminShow'])->middleware('role:admin')->name('admin.envios.show');
     Route::post('/admin/envios/{envio}/asignar-transporte', [EnvioController::class, 'asignarTransporte'])->middleware('role:admin')->name('admin.asignar-transporte');
     // Administración de usuarios (listado y envíos por usuario)
     Route::get('/admin/usuarios', [EnvioController::class, 'adminUsuarios'])->middleware('role:admin')->name('admin.usuarios');

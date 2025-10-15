@@ -26,14 +26,27 @@
                         <div class="row">
                             @foreach($list as $e)
                                 @php
-                                    $pesoTotal = (float)($e->peso_producto_unidad ?? 0) * (int)($e->unidades_totales ?? 0);
-                                    $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                                    // Totales con soporte para múltiples ítems
+                                    $items = is_array($e->items ?? null) ? $e->items : [];
+                                    if (count($items) > 0) {
+                                        $pesoTotal = 0; $precioTotal = 0; $unidadesTotal = 0;
+                                        foreach ($items as $it) {
+                                            $unidades = (int)($it['unidades_totales'] ?? 0);
+                                            $pesoTotal += (float)($it['peso_producto_unidad'] ?? 0) * $unidades;
+                                            $precioTotal += (float)($it['precio_producto'] ?? 0) * $unidades;
+                                            $unidadesTotal += $unidades;
+                                        }
+                                    } else {
+                                        $pesoTotal = (float)($e->peso_producto_unidad ?? 0) * (int)($e->unidades_totales ?? 0);
+                                        $precioTotal = (float)($e->precio_producto ?? 0) * (int)($e->unidades_totales ?? 0);
+                                        $unidadesTotal = (int)($e->unidades_totales ?? 0);
+                                    }
                                     $estadoClass = $e->estado === 'confirmado' ? 'success' : ($e->estado === 'pendiente' ? 'warning' : 'info');
                                 @endphp
                                 <div class="col-12 mb-4">
                                   <div class="card card-{{ $estadoClass }} card-outline">
                                     <div class="card-header">
-                                      <h5 class="card-title mb-0">Pedido #{{ $e->id }} - {{ $e->producto }}
+                                      <h5 class="card-title mb-0">Pedido #{{ $e->id }}
                                         <span class="badge badge-{{ $estadoClass }} float-right">{{ ucfirst($e->estado) }}</span>
                                       </h5>
                                     </div>
@@ -41,8 +54,8 @@
                                       <div class="row">
                                         <div class="col-md-6">
                                           <h6>Información del Pedido</h6>
-                                          <div class="row mb-2"><div class="col-6"><strong>Categoría:</strong></div><div class="col-6">{{ $e->categoria_producto }}</div></div>
-                                          <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $e->unidades_totales }}</div></div>
+                                          <div class="row mb-2"><div class="col-6"><strong>Productos:</strong></div><div class="col-6">{{ (count($items)>0) ? (count($items).' productos') : ($e->producto) }}</div></div>
+                                          <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $unidadesTotal }}</div></div>
                                           <div class="row mb-2"><div class="col-6"><strong>Peso Total:</strong></div><div class="col-6">{{ number_format($pesoTotal,2) }} kg</div></div>
                                           <div class="row mb-2"><div class="col-6"><strong>Precio Total:</strong></div><div class="col-6">Bs {{ number_format($precioTotal,2) }}</div></div>
                                           <div class="row mb-2"><div class="col-6"><strong>Fecha:</strong></div><div class="col-6">{{ optional($e->created_at ?? $e->fecha_creacion)->format('d/m/Y H:i') }}</div></div>
@@ -51,32 +64,11 @@
                                           <h6>Información de Transporte</h6>
                                           <div class="row mb-2"><div class="col-6"><strong>Sugerido:</strong></div><div class="col-6">{{ $e->transporte_sugerido }}</div></div>
                                           <div class="row mb-2"><div class="col-6"><strong>Seleccionado:</strong></div><div class="col-6">{{ $e->transporte_seleccionado }}</div></div>
-                                          @if($e->estado === 'pendiente')
-                                              <form method="POST" action="{{ route('admin.asignar-transporte', $e->id) }}">
-                                                @csrf
-                                                <div class="row mb-2"><div class="col-6"><strong>Transportista:</strong></div><div class="col-6">
-                                                  <select class="form-control" name="transportista_id">
-                                                    <option value="">Seleccionar transportista...</option>
-                                                    @foreach(($transportistas ?? []) as $t)
-                                                      <option value="{{ $t->id }}">{{ $t->nombre ?? ('ID '.$t->id) }}</option>
-                                                    @endforeach
-                                                  </select>
-                                                </div></div>
-                                                <div class="row mb-2"><div class="col-6"><strong>Vehículo:</strong></div><div class="col-6">
-                                                  <select class="form-control" name="vehiculo_id">
-                                                    <option value="">Seleccionar vehículo...</option>
-                                                    @foreach(($vehiculos ?? []) as $v)
-                                                      <option value="{{ $v->id }}">{{ $v->placa ?? ('ID '.$v->id) }}</option>
-                                                    @endforeach
-                                                  </select>
-                                                </div></div>
-                                                <div class="text-right">
-                                                  <button class="btn btn-success"><i class="fas fa-check mr-1"></i>Confirmar</button>
-                                                </div>
-                                              </form>
-                                          @else
-                                              <div class="alert alert-success mb-0"><i class="fas fa-check-circle mr-1"></i> Pedido confirmado el {{ optional($e->fecha_confirmacion)->format('d/m/Y H:i') }}</div>
-                                          @endif
+                                          <div class="mt-3">
+                                            <a href="{{ route('admin.envios.show', $e->id) }}" class="btn btn-primary">
+                                              <i class="fas fa-eye mr-1"></i> Ver / Confirmar
+                                            </a>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
