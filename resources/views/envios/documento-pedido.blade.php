@@ -17,9 +17,15 @@
                         <button onclick="window.print()" class="btn btn-secondary btn-sm">
                             <i class="fas fa-print mr-1"></i>Imprimir
                         </button>
-                        <a href="{{ route('envios.mis') }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-arrow-left mr-1"></i>Volver a Mis Envíos
-                        </a>
+                        @if(session('user_role')==='admin')
+                            <a href="{{ route('admin.envios') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-left mr-1"></i>Volver al Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('envios.mis') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-left mr-1"></i>Volver a Mis Envíos
+                            </a>
+                        @endif
                     </div>
                 </div>
 

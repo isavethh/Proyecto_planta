@@ -268,14 +268,47 @@ class EnvioController extends Controller
             abort(403);
         }
 
+        // Validación relajada: permitir confirmar sin selección explícita
         $request->validate([
-            'transportista_id' => 'required|exists:transportistas,id',
-            'vehiculo_id' => 'required|exists:vehiculos,id'
+            'transportista_id' => 'nullable|integer',
+            'vehiculo_id' => 'nullable|integer'
         ]);
 
+        // Resolver/crear placeholders si faltan datos o no existen
+        $transportistaId = $request->transportista_id;
+        $vehiculoId = $request->vehiculo_id;
+
+        if (!$transportistaId || !\App\Models\Transportista::where('id', $transportistaId)->exists()) {
+            $placeholderT = \App\Models\Transportista::first();
+            if (!$placeholderT) {
+                $placeholderT = \App\Models\Transportista::create([
+                    'nombre' => 'Transportista Asignado',
+                    'telefono' => 'N/A',
+                    'licencia' => 'N/A',
+                    'empresa' => 'N/A',
+                    'activo' => true,
+                ]);
+            }
+            $transportistaId = $placeholderT->id;
+        }
+
+        if (!$vehiculoId || !\App\Models\Vehiculo::where('id', $vehiculoId)->exists()) {
+            $placeholderV = \App\Models\Vehiculo::first();
+            if (!$placeholderV) {
+                $placeholderV = \App\Models\Vehiculo::create([
+                    'transportista_id' => $transportistaId,
+                    'placa' => 'PLACA-000',
+                    'tipo' => 'camion',
+                    'capacidad_kg' => 1000,
+                    'activo' => true,
+                ]);
+            }
+            $vehiculoId = $placeholderV->id;
+        }
+
         $envio->update([
-            'transportista_id' => $request->transportista_id,
-            'vehiculo_id' => $request->vehiculo_id,
+            'transportista_id' => $transportistaId,
+            'vehiculo_id' => $vehiculoId,
             'estado' => Envio::ESTADO_CONFIRMADO,
             'fecha_confirmacion' => now()
         ]);
