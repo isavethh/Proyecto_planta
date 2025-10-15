@@ -214,6 +214,22 @@ class EnvioController extends Controller
     }
 
     /**
+     * Lista documentos del usuario autenticado (pendientes y confirmados)
+     */
+    public function misDocumentos()
+    {
+        if (!session('user_id')) {
+            return redirect('/login');
+        }
+
+        $envios = Envio::where('cliente_id', session('user_id'))
+            ->orderBy('fecha_creacion', 'desc')
+            ->get();
+
+        return view('envios.mis-documentos', compact('envios'));
+    }
+
+    /**
      * Vista de administración para gestionar envíos (solo admin)
      */
     public function adminIndex()

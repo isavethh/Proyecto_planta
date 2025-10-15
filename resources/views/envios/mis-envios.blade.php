@@ -69,6 +69,9 @@
                                                 <a href="{{ route('envios.documento', $e->id) }}" class="btn btn-success" target="_blank">
                                                     <i class="fas fa-file-pdf"></i> Documento
                                                 </a>
+                                                <a href="{{ route('envios.mis.documentos') }}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-list"></i> Mis Documentos
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

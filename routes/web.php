@@ -39,8 +39,8 @@ Route::middleware(['web'])->group(function () {
     Route::get('/reglamento', [EnvioController::class, 'reglamento'])->name('envios.reglamento');
 
     Route::get('/documento-pedido/{envio}', [EnvioController::class, 'documentoPedido'])->name('envios.documento');
-    // Ruta alternativa sin parámetro para abrir el documento usando localStorage/envioActual
-    Route::get('/documento-pedido', function(){ return view('envios.documento-pedido'); })->name('envios.documento.blank');
+    // Ruta sin parámetro: redirigir al listado de documentos del usuario
+    Route::get('/documento-pedido', function(){ return redirect()->route('envios.mis.documentos'); })->name('envios.documento.blank');
 
     Route::get('/admin/envios', [EnvioController::class, 'adminIndex'])->middleware('role:admin')->name('admin.envios');
     Route::post('/admin/envios/{envio}/asignar-transporte', [EnvioController::class, 'asignarTransporte'])->middleware('role:admin')->name('admin.asignar-transporte');
@@ -49,4 +49,9 @@ Route::middleware(['web'])->group(function () {
     Route::get('/admin/usuarios/{clienteId}/envios', [EnvioController::class, 'adminEnviosDeUsuario'])->middleware('role:admin')->name('admin.usuarios.envios');
     // Documentos de envíos confirmados (admin)
     Route::get('/admin/documentos', [EnvioController::class, 'adminDocumentos'])->middleware('role:admin')->name('admin.documentos');
+});
+
+// Documentos del usuario autenticado (todas las órdenes del usuario)
+Route::middleware(['web'])->group(function(){
+    Route::get('/mis-documentos', [EnvioController::class, 'misDocumentos'])->name('envios.mis.documentos');
 });
