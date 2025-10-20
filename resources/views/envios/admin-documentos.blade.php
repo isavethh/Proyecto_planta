@@ -45,9 +45,8 @@
                       <div class="row mb-2"><div class="col-6"><strong>Total:</strong></div><div class="col-6">Bs {{ number_format($precioTotal, 2) }}</div></div>
                       <div class="row mb-2"><div class="col-6"><strong>Confirmado:</strong></div><div class="col-6">{{ optional($e->fecha_confirmacion)->format('d/m/Y H:i') }}</div></div>
                     </div>
-                    <div class="card-footer d-flex justify-content-between">
+                    <div class="card-footer text-center">
                       <a href="{{ route('envios.documento', $e->id) }}" class="btn btn-info btn-sm" target="_blank"><i class="fas fa-file-pdf"></i> Ver Documento</a>
-                      <a href="{{ route('admin.envios', ['estado' => 'confirmado']) }}" class="btn btn-outline-secondary btn-sm">Ver lista</a>
                     </div>
                   </div>
                 </div>

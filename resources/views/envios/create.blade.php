@@ -57,18 +57,20 @@
                                                 <label>Categoría <span class="text-danger">*</span></label>
                                                 <select class="form-control item-categoria" name="items[0][categoria_producto]" required>
                                         <option value="">Seleccionar categoría...</option>
-                                        <option value="alimentos">Alimentos</option>
-                                        <option value="medicinas">Medicinas</option>
-                                        <option value="electronica">Electrónica</option>
-                                        <option value="ropa">Ropa</option>
-                                        <option value="otros">Otros</option>
+                                        <option value="frutas">Frutas</option>
+                                        <option value="verduras">Verduras</option>
+                                        <option value="granos">Granos</option>
+                                        <option value="lacteos">Lácteos</option>
+                                        <option value="medicamentos">Medicamentos</option>
                                     </select>
                                 </div>
                             </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Producto <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control item-producto" name="items[0][producto]" required>
+                                                <select class="form-control item-producto" name="items[0][producto]" required>
+                                                    <option value="">Seleccionar producto...</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -84,8 +86,14 @@
                                     <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                                <label>Peso por Unidad (kg) <span class="text-danger">*</span></label>
+                                                <label>Peso por Unidad <span class="text-danger">*</span></label>
+                                                <div class="input-group">
                                                 <input type="number" step="0.01" class="form-control item-peso" name="items[0][peso_producto_unidad]" required>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text unidad-label">kg</span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2 medidas-ayuda text-muted small"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -115,12 +123,9 @@
                                 <div class="form-group">
                                     <label>Tipo de Transporte <span class="text-danger">*</span></label>
                                     <div id="chips-transporte" class="d-flex flex-wrap" style="gap:.5rem">
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="camion_pequeno">Camión Pequeño</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="camion_mediano">Camión Mediano</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="camion_grande">Camión Grande</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="camion_refrigerado">Camión Refrigerado</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="avion_carga">Avión de Carga</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="barco">Transporte Marítimo</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="aislado">Transporte Aislado</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="ventilado">Transporte Ventilado</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm chip-transporte" data-key="refrigerado">Transporte Refrigerado</button>
                                     </div>
                                     <input type="hidden" id="transporte_seleccionado" name="transporte_seleccionado" required>
                                     <small id="chip-ayuda" class="form-text text-muted">Haz clic para seleccionar. El sugerido se resaltará.</small>
@@ -132,8 +137,23 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="fecha_entrega_deseada">Fecha y Hora de Entrega Deseada</label>
-                                    <input type="datetime-local" class="form-control" id="fecha_entrega_deseada" name="fecha_entrega_deseada">
+                                    <label for="fecha_entrega_deseada">Fecha de Entrega Deseada <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="fecha_entrega_deseada" name="fecha_entrega_deseada" placeholder="Selecciona fecha y hora" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="hora_entrega_texto" class="d-block">Esta es la hora en la que quieres recibir tu pedido <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" id="hora_entrega_texto" placeholder="10:30" aria-label="Hora de entrega" required>
+                                      <div class="input-group-append">
+                                        <div class="btn-group" role="group" aria-label="Selector AM o PM">
+                                          <button type="button" class="btn btn-outline-secondary btn-ampm active" data-val="AM">AM</button>
+                                          <button type="button" class="btn btn-outline-secondary btn-ampm" data-val="PM">PM</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <small class="form-text text-muted">Usa el reloj para elegir la hora o escribe en formato hh:mm y elige AM/PM.</small>
                                 </div>
                             </div>
                         </div>
@@ -280,6 +300,61 @@
 })();
 
 $(document).ready(function() {
+    // Catálogo de productos por categoría (hardcodeado)
+    const catalogoProductos = {
+        frutas: ['Manzana', 'Banana', 'Naranja', 'Mango', 'Uva'],
+        verduras: ['Lechuga', 'Tomate', 'Zanahoria', 'Cebolla', 'Papa'],
+        granos: ['Arroz', 'Maíz', 'Quinua', 'Trigo', 'Avena'],
+        lacteos: ['Leche', 'Yogur', 'Queso', 'Mantequilla', 'Crema'],
+        medicamentos: ['Paracetamol', 'Ibuprofeno', 'Jarabe para la tos', 'Vitamina C', 'Antibiótico']
+    };
+
+    function llenarProductos($card){
+        const cat = $card.find('.item-categoria').val();
+        const $sel = $card.find('.item-producto');
+        $sel.empty().append('<option value="">Seleccionar producto...</option>');
+        if(catalogoProductos[cat]){
+            for(const p of catalogoProductos[cat]){
+                $sel.append(`<option value="${p}">${p}</option>`);
+            }
+        }
+    }
+
+    function actualizarUnidadesPesoUI($card){
+        const cat = $card.find('.item-categoria').val();
+        const $unidadLabel = $card.find('.unidad-label');
+        const $ayuda = $card.find('.medidas-ayuda');
+        $card.find('.grupo-medida-extra').remove();
+        // Default
+        let unidad = 'kg';
+        let ayuda = '';
+        if(cat === 'lacteos'){
+            // Botones litro/kg
+            const botones = `
+            <div class="btn-group btn-group-sm mt-2 grupo-medida-extra" role="group" aria-label="Selector de tipo de medida para lácteos">
+                <button type="button" class="btn btn-outline-primary btn-medida" data-unidad="L">Litro (L)</button>
+                <button type="button" class="btn btn-outline-primary btn-medida" data-unidad="kg">Kilogramo (kg)</button>
+            </div>`;
+            $ayuda.before(botones);
+            ayuda = 'Elige L para líquidos como leche o yogur; kg para queso.';
+            unidad = 'L';
+        } else if (cat === 'medicamentos'){
+            const botones = `
+            <div class="btn-group btn-group-sm mt-2 grupo-medida-extra" role="group" aria-label="Selector de tipo de medida para medicamentos">
+                <button type="button" class="btn btn-outline-primary btn-medida" data-unidad="mL">Mililitro (mL)</button>
+                <button type="button" class="btn btn-outline-primary btn-medida" data-unidad="mg">Miligramo (mg)</button>
+            </div>`;
+            $ayuda.before(botones);
+            ayuda = 'Usa mL para jarabes/inyectables; mg para cápsulas/pastillas.';
+            unidad = 'mL';
+        } else {
+            ayuda = 'Para la mayoría de productos se usa kg por unidad.';
+            unidad = 'kg';
+        }
+        $unidadLabel.text(unidad);
+        $ayuda.text(ayuda);
+    }
+
     function leerItems() {
         const items = [];
         $('#items-container .item-card').each(function(){
@@ -316,16 +391,14 @@ $(document).ready(function() {
     }
 
     function calcularTransporteSugerido(items, pesoTotal) {
-        let key = 'camion_pequeno';
-        const tieneFrio = items.some(it => it.categoria_producto === 'alimentos' || it.categoria_producto === 'medicinas');
-        if (tieneFrio) {
-            key = 'camion_refrigerado';
-        } else if (pesoTotal > 1000) {
-            key = 'camion_grande';
-        } else if (pesoTotal > 500) {
-            key = 'camion_mediano';
-        } else {
-            key = 'camion_pequeno';
+        let key = 'aislado';
+        const requiereFrio = items.some(it => it.categoria_producto === 'lacteos' || it.categoria_producto === 'medicamentos');
+        if (requiereFrio) {
+            key = 'refrigerado';
+        } else if (items.some(it => it.categoria_producto === 'frutas' || it.categoria_producto === 'verduras')) {
+            key = pesoTotal > 200 ? 'ventilado' : 'aislado';
+        } else if (items.some(it => it.categoria_producto === 'granos')) {
+            key = pesoTotal > 1000 ? 'ventilado' : 'aislado';
         }
         const label = nombreTransporte(key);
         $('#transporte_sugerido_text').text(label);
@@ -343,6 +416,9 @@ $(document).ready(function() {
             card.find('.item-peso').attr('name', `items[${index}][peso_producto_unidad]`);
             card.find('.item-unidades').attr('name', `items[${index}][unidades_totales]`);
             card.find('.item-precio').attr('name', `items[${index}][precio_producto]`);
+            // Inicializar combos y unidades cuando se crea/clona
+            llenarProductos(card);
+            actualizarUnidadesPesoUI(card);
         });
         // Mostrar botón eliminar solo si hay más de 1 ítem
         const many = $('#items-container .item-card').length > 1;
@@ -369,18 +445,20 @@ $(document).ready(function() {
                                 <label>Categoría <span class="text-danger">*</span></label>
                                 <select class="form-control item-categoria" name="items[${index}][categoria_producto]" required>
                                     <option value="">Seleccionar categoría...</option>
-                                    <option value="alimentos">Alimentos</option>
-                                    <option value="medicinas">Medicinas</option>
-                                    <option value="electronica">Electrónica</option>
-                                    <option value="ropa">Ropa</option>
-                                    <option value="otros">Otros</option>
+                                    <option value="frutas">Frutas</option>
+                                    <option value="verduras">Verduras</option>
+                                    <option value="granos">Granos</option>
+                                    <option value="lacteos">Lácteos</option>
+                                    <option value="medicamentos">Medicamentos</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Producto <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control item-producto" name="items[${index}][producto]" required>
+                                <select class="form-control item-producto" name="items[${index}][producto]" required>
+                                    <option value="">Seleccionar producto...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -396,8 +474,12 @@ $(document).ready(function() {
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Peso por Unidad (kg) <span class="text-danger">*</span></label>
+                                <label>Peso por Unidad <span class="text-danger">*</span></label>
+                                <div class="input-group">
                                 <input type="number" step="0.01" class="form-control item-peso" name="items[${index}][peso_producto_unidad]" required>
+                                    <div class="input-group-append"><span class="input-group-text unidad-label">kg</span></div>
+                                </div>
+                                <div class="mt-2 medidas-ayuda text-muted small"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -420,7 +502,18 @@ $(document).ready(function() {
         calcularResumen();
     });
 
-    $(document).on('input change', '.item-categoria, .item-producto, .item-peso, .item-unidades, .item-precio', calcularResumen);
+    $(document).on('change', '.item-categoria', function(){
+        const $card = $(this).closest('.item-card');
+        llenarProductos($card);
+        actualizarUnidadesPesoUI($card);
+        calcularResumen();
+    });
+    $(document).on('click', '.btn-medida', function(){
+        const unidad = $(this).data('unidad');
+        const $card = $(this).closest('.item-card');
+        $card.find('.unidad-label').text(unidad);
+    });
+    $(document).on('input change', '.item-producto, .item-peso, .item-unidades, .item-precio', calcularResumen);
 
     // Calcular inicialmente
     renumerarItems();
@@ -445,6 +538,21 @@ $(document).ready(function() {
         const destinoLng = parseFloat($('#destino_lng').val()) || null;
         const distanciaKm = parseFloat($('#resumen_distancia').data('km')) || null;
         if(!destinoLat || !destinoLng){ alert('Selecciona un destino en el mapa o con el buscador.'); return; }
+        const fechaCompleta = $('#fecha_entrega_deseada').val();
+        let horaSolo = $('#hora_entrega_texto').val();
+        const ampm = ($('.btn-ampm.active').data('val') || 'AM');
+        if(!fechaCompleta || !horaSolo){ alert('Selecciona fecha y hora de entrega.'); return; }
+        // Validación estricta de hora hh:mm 12h y rango
+        if(!/^\d{1,2}:\d{2}$/.test(horaSolo)) { alert('Hora inválida. Usa formato hh:mm'); return; }
+        let [h,m] = horaSolo.split(':');
+        let hh = parseInt(h,10), mm = parseInt(m,10);
+        if(isNaN(hh) || isNaN(mm) || hh<1 || hh>12 || mm<0 || mm>59){ alert('Hora inválida. Verifica horas (1-12) y minutos (00-59).'); return; }
+        // Convertir a 24h para enviar
+        if(ampm==='AM' && hh===12) hh = 0;
+        if(ampm==='PM' && hh<12) hh += 12;
+        const day = fechaCompleta.split(' ')[0] || fechaCompleta;
+        const time24 = String(hh).padStart(2,'0')+":"+String(mm).padStart(2,'0');
+        $('#fecha_entrega_deseada').val(day + ' ' + time24);
         if(!transporteSeleccionadoKey){ transporteSeleccionadoKey = sugerido.key; $('#transporte_seleccionado').val(sugerido.key); }
         // Validar que todos los ítems tengan datos
         if(items.length === 0){ alert('Agrega al menos un producto.'); return; }
@@ -589,22 +697,19 @@ $(document).ready(function() {
     // -------------------- Chips de transporte --------------------
     function nombreTransporte(key){
         const map = {
-            camion_pequeno:'Camión Pequeño',
-            camion_mediano:'Camión Mediano',
-            camion_grande:'Camión Grande',
-            camion_refrigerado:'Camión Refrigerado',
-            avion_carga:'Avión de Carga',
-            barco:'Transporte Marítimo'
+            aislado:'Transporte Aislado',
+            ventilado:'Transporte Ventilado',
+            refrigerado:'Transporte Refrigerado'
         };
         return map[key] || '';
     }
     function resaltarSugerido(arg){
-        const keySet = new Set(['camion_pequeno','camion_mediano','camion_grande','camion_refrigerado','avion_carga','barco']);
+        const keySet = new Set(['aislado','ventilado','refrigerado']);
         let key = null;
         if(keySet.has(arg)){
             key = arg;
         } else {
-            const labelToKey = { 'Camión Pequeño':'camion_pequeno', 'Camión Mediano':'camion_mediano', 'Camión Grande':'camion_grande', 'Camión Refrigerado':'camion_refrigerado', 'Avión de Carga':'avion_carga', 'Transporte Marítimo':'barco' };
+            const labelToKey = { 'Transporte Aislado':'aislado', 'Transporte Ventilado':'ventilado', 'Transporte Refrigerado':'refrigerado' };
             key = labelToKey[arg];
         }
         if(!key) return;
@@ -620,16 +725,90 @@ $(document).ready(function() {
 });
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+/* Oculta el toggle AM/PM del widget para evitar duplicidad; usamos nuestros botones */
+.flatpickr-am-pm{ display:none !important; }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 $(function(){
   if(window.flatpickr){
-    flatpickr('#fecha_entrega_deseada', {
+    const fp = flatpickr('#fecha_entrega_deseada', {
       enableTime: true,
-      time_24hr: true,
+      time_24hr: false,
       minuteIncrement: 15,
       dateFormat: 'Y-m-d H:i',
-      minDate: 'today'
+      minDate: 'today',
+      onOpen: function(){
+        // sincroniza con control de hora separado
+        const v = document.getElementById('hora_entrega_texto').value;
+        if(v){ this.setDate(this.input.value.split(' ')[0] + ' ' + v, false); }
+      },
+      onChange: function(selectedDates, dateStr){
+        const time = dateStr.split(' ')[1] || '';
+        if(time){
+          let [h,m] = time.split(':');
+          let ampm = 'AM';
+          let hh = parseInt(h,10);
+          if(hh === 0){ hh = 12; ampm = 'AM'; }
+          else if(hh === 12){ ampm = 'PM'; }
+          else if(hh > 12){ ampm = 'PM'; hh = hh - 12; }
+          else { ampm = 'AM'; }
+          $('#hora_entrega_texto').val(String(hh).padStart(2,'0')+":"+m);
+          $('.btn-ampm').removeClass('active');
+          $(`.btn-ampm[data-val="${ampm}"]`).addClass('active');
+        }
+      }
+    });
+    // Widget de hora tipo reloj (intuitivo) solo-hora
+    const tp = flatpickr('#hora_entrega_texto', {
+      enableTime: true,
+      noCalendar: true,
+      time_24hr: false,
+      minuteIncrement: 15,
+      dateFormat: 'h:i',
+      onOpen: function(){
+        // sincroniza con AM/PM activo
+        const ampm = ($('.btn-ampm.active').data('val')||'AM');
+        const v = $('#hora_entrega_texto').val();
+        if(/^\d{1,2}:\d{2}$/.test(v)){
+          let [h,m] = v.split(':');
+          let hh = parseInt(h,10);
+          if(ampm==='AM' && hh===12) hh = 0;
+          if(ampm==='PM' && hh<12) hh += 12;
+          this.setDate(`${String(hh).padStart(2,'0')}:${m}`, false, 'H:i');
+        }
+      },
+      onChange: function(selectedDates, dateStr){
+        // Mostrar siempre en 12h con AM/PM por botones
+        const d = selectedDates[0];
+        if(!d) return;
+        let hh = d.getHours();
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        let ampm = 'AM';
+        if(hh === 0){ hh = 12; ampm = 'AM'; }
+        else if(hh === 12){ ampm = 'PM'; }
+        else if(hh > 12){ ampm = 'PM'; hh -= 12; }
+        $('#hora_entrega_texto').val(String(hh).padStart(2,'0')+":"+mm);
+        $('.btn-ampm').removeClass('active');
+        $(`.btn-ampm[data-val="${ampm}"]`).addClass('active');
+      }
+    });
+    // Cambio AM/PM por botones
+    $(document).on('click', '.btn-ampm', function(){
+      $('.btn-ampm').removeClass('active');
+      $(this).addClass('active');
+      const current = fp.input.value;
+      const day = current.split(' ')[0] || '';
+      let horas = $('#hora_entrega_texto').val();
+      if(!horas || !day) return;
+      let [h,m] = horas.split(':');
+      let hh = parseInt(h,10);
+      const ampm = $(this).data('val');
+      if(ampm==='AM' && hh===12) hh = 0;
+      if(ampm==='PM' && hh<12) hh += 12;
+      const time24 = String(hh).padStart(2,'0')+":"+m;
+      fp.setDate(day + ' ' + time24, true);
     });
   }
 });

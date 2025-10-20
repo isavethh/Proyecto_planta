@@ -11,19 +11,20 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <span id="doc-title">Documento de Pedido</span>
-                        <span id="doc-estado" class="badge badge-warning">Pendiente</span>
+                        @php $estado=$envio->estado ?? 'pendiente'; $cls=$estado==='confirmado'?'success':($estado==='en_proceso'?'primary':($estado==='recibido'?'info':'warning')); @endphp
+                        <span id="doc-estado" class="badge badge-{{ $cls }}">{{ ucfirst($estado) }}</span>
                     </h3>
                     <div class="card-tools">
-                        <button onclick="window.print()" class="btn btn-secondary btn-sm">
+                        <button onclick="window.print()" class="btn btn-light btn-sm shadow-sm">
                             <i class="fas fa-print mr-1"></i>Imprimir
                         </button>
                         @if(session('user_role')==='admin')
-                            <a href="{{ route('admin.envios') }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('admin.envios') }}" class="btn btn-warning btn-sm shadow-sm">
                                 <i class="fas fa-arrow-left mr-1"></i>Volver al Dashboard
                             </a>
                         @else
-                            <a href="{{ route('envios.mis') }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-arrow-left mr-1"></i>Volver a Mis Envíos
+                            <a href="{{ route('envios.mis.documentos') }}" class="btn btn-warning btn-sm shadow-sm">
+                                <i class="fas fa-arrow-left mr-1"></i>Volver a Documentos de Envío
                             </a>
                         @endif
                     </div>
@@ -223,16 +224,16 @@
                                         <div class="col-md-4"><div class="info-box bg-success"><div class="info-box-content"><span class="info-box-text">Total a Pagar</span><span class="info-box-number">Bs {{ number_format($precioTotal, 2) }}</span></div></div></div>
                                     </div>
 
-                                    <div class="alert alert-info mt-3">
+                                    <div class="alert alert-info mt-3 text-center">
                                         <h6><i class="fas fa-info-circle"></i> Formas de Pago Aceptadas</h6>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <i class="fas fa-dollar-sign text-success"></i> Dólares en efectivo
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-4 text-center">
+                                                <i class="fas fa-coins text-success"></i> Bolivianos (transferencia o efectivo)
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 text-center">
                                                 <i class="fas fa-coins text-warning"></i> USDT (Tether)
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 text-center">
                                                 <i class="fas fa-circle-notch text-info"></i> USDC (USD Coin)
                                             </div>
                                         </div>

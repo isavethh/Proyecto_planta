@@ -40,8 +40,8 @@
                                 <div class="row">
                                     <div class="col-md-4 text-center mb-3">
                                         <i class="fas fa-dollar-sign fa-3x text-success mb-2"></i>
-                                        <h6>Dólares en Efectivo</h6>
-                                        <p>Aceptamos pagos en dólares estadounidenses en efectivo</p>
+                                        <h6>Bolivianos (BOB)</h6>
+                                        <p>Aceptamos pagos en bolivianos por transferencia bancaria o en efectivo.</p>
                                     </div>
                                     <div class="col-md-4 text-center mb-3">
                                         <i class="fas fa-coins fa-3x text-warning mb-2"></i>
@@ -62,9 +62,9 @@
                                 <ol>
                                     <li><strong>Creación del Pedido:</strong> El cliente completa el formulario de envío con todos los detalles requeridos.</li>
                                     <li><strong>Revisión Inicial:</strong> El sistema sugiere automáticamente el tipo de transporte más adecuado.</li>
-                                    <li><strong>Confirmación:</strong> El cliente puede modificar el tipo de transporte sugerido según sus necesidades.</li>
+                                    <li><strong>Selección:</strong> El cliente elige entre Transporte Aislado, Ventilado o Refrigerado.</li>
                                     <li><strong>Estado Pendiente:</strong> El pedido queda en estado "pendiente" hasta que el administrador lo revise.</li>
-                                    <li><strong>Asignación de Transporte:</strong> El administrador asigna transportista y vehículo específicos.</li>
+                                    <li><strong>Asignación de Transporte:</strong> El administrador asigna transportista y vehículo específicos y define el tamaño del transporte.</li>
                                     <li><strong>Confirmación Final:</strong> Una vez asignado el transporte, el pedido se marca como "confirmado".</li>
                                     <li><strong>Entrega:</strong> El cliente recibe el producto en la dirección especificada.</li>
                                 </ol>
@@ -74,32 +74,17 @@
                             <div class="mb-4">
                                 <h4><i class="fas fa-list text-info"></i> Estados del Pedido</h4>
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card card-warning">
-                                            <div class="card-body text-center">
-                                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                                                <h6>Pendiente</h6>
-                                                <small>Esperando revisión del administrador</small>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-warning"><div class="card-body text-center"><i class="fas fa-clock fa-2x text-warning mb-2"></i><h6>Pendiente</h6><small>En espera de revisión del administrador.</small></div></div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="card card-success">
-                                            <div class="card-body text-center">
-                                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                                                <h6>Confirmado</h6>
-                                                <small>Transporte asignado y en proceso</small>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-success"><div class="card-body text-center"><i class="fas fa-check-circle fa-2x text-success mb-2"></i><h6>Confirmado</h6><small>Cuando el admin designa transportista, transporte y lo envía.</small></div></div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="card card-info">
-                                            <div class="card-body text-center">
-                                                <i class="fas fa-box fa-2x text-info mb-2"></i>
-                                                <h6>Recibido</h6>
-                                                <small>Producto entregado al cliente</small>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-primary"><div class="card-body text-center"><i class="fas fa-route fa-2x text-primary mb-2"></i><h6>En Proceso</h6><small>Cuando el transportista acepta el pedido desde su aplicación.</small></div></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-info"><div class="card-body text-center"><i class="fas fa-box-open fa-2x text-info mb-2"></i><h6>Recibido</h6><small>Cuando el cliente acepta el recibimiento del pedido.</small></div></div>
                                     </div>
                                 </div>
                             </div>
@@ -112,18 +97,15 @@
                                         <h6>Del Cliente:</h6>
                                         <ul>
                                             <li>Proporcionar información precisa del envío</li>
-                                            <li>Asegurarse de que el producto esté correctamente embalado</li>
                                             <li>Estar disponible para recibir el envío</li>
                                             <li>Realizar el pago según las condiciones acordadas</li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
-                                        <h6>De la Empresa:</h6>
+                                        <h6>Roles Operativos:</h6>
                                         <ul>
-                                            <li>Garantizar la integridad del producto durante el transporte</li>
-                                            <li>Asignar el transporte más adecuado según las características del envío</li>
-                                            <li>Mantener informado al cliente sobre el estado del envío</li>
-                                            <li>Cumplir con los tiempos de entrega estimados</li>
+                                            <li><strong>Empresa:</strong> Garantizar la integridad del producto durante el transporte; asignar el transporte más adecuado; cumplir con los tiempos de entrega estimados.</li>
+                                            <li><strong>Transportista:</strong> Aceptar o rechazar pedidos asignados; compartir su ubicación en tiempo real con el cliente durante el trayecto; confirmar cuando haya entregado el pedido al cliente.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -174,13 +156,11 @@
                                     <div class="mb-3">
                                         <h6><i class="fas fa-truck"></i> Tipos de Transporte</h6>
                                         <ul class="list-unstyled text-sm">
-                                            <li><i class="fas fa-check text-success"></i> Camión Pequeño</li>
-                                            <li><i class="fas fa-check text-success"></i> Camión Mediano</li>
-                                            <li><i class="fas fa-check text-success"></i> Camión Grande</li>
-                                            <li><i class="fas fa-check text-success"></i> Camión Refrigerado</li>
-                                            <li><i class="fas fa-check text-success"></i> Avión de Carga</li>
-                                            <li><i class="fas fa-check text-success"></i> Transporte Marítimo</li>
+                                            <li><i class="fas fa-check text-success"></i> Transporte Aislado</li>
+                                            <li><i class="fas fa-check text-success"></i> Transporte Ventilado</li>
+                                            <li><i class="fas fa-check text-success"></i> Transporte Refrigerado</li>
                                         </ul>
+                                        <small class="text-muted d-block">El tamaño del transporte lo define el administrador según la cantidad total de productos/peso.</small>
                                     </div>
                                 </div>
                             </div>

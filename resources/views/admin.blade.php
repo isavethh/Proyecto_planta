@@ -139,9 +139,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('/documento-pedido') }}" class="nav-link">
+                                <a href="{{ url('/mis-documentos') }}" class="nav-link">
                                     <i class="nav-icon fas fa-file-pdf"></i>
-                                    <p>Documento de Pedido</p>
+                                    <p>Documentos de Pedido</p>
                                 </a>
                             </li>
                         @endif

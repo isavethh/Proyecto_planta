@@ -56,7 +56,7 @@ class EnvioController extends Controller
                 'destino_lat' => 'nullable|numeric',
                 'destino_lng' => 'nullable|numeric',
                 'distancia_km' => 'nullable|numeric',
-                'fecha_entrega_deseada' => 'nullable|date'
+                'fecha_entrega_deseada' => 'required|date'
             ]);
         } else {
             $request->validate([
@@ -70,7 +70,7 @@ class EnvioController extends Controller
                 'destino_lat' => 'nullable|numeric',
                 'destino_lng' => 'nullable|numeric',
                 'distancia_km' => 'nullable|numeric',
-                'fecha_entrega_deseada' => 'nullable|date'
+                'fecha_entrega_deseada' => 'required|date'
             ]);
         }
 
@@ -84,7 +84,7 @@ class EnvioController extends Controller
             foreach ($request->items as $it) {
                 $pesoTotal += ((float)$it['peso_producto_unidad']) * ((int)$it['unidades_totales']);
                 // Dar prioridad a alimentos/medicinas si existen
-                if (in_array($it['categoria_producto'], ['alimentos','medicinas'])) {
+                if (in_array($it['categoria_producto'], ['lacteos','medicamentos'])) {
                     $categoriaPrioritaria = $it['categoria_producto'];
                 }
             }
@@ -373,12 +373,14 @@ class EnvioController extends Controller
         // Validación relajada: permitir confirmar sin selección explícita
         $request->validate([
             'transportista_id' => 'nullable|integer',
-            'vehiculo_id' => 'nullable|integer'
+            'vehiculo_id' => 'nullable|integer',
+            'tamano_transporte' => 'nullable|in:pequeno,mediano,grande'
         ]);
 
         // Resolver/crear placeholders si faltan datos o no existen
         $transportistaId = $request->transportista_id;
         $vehiculoId = $request->vehiculo_id;
+        $tamano = $request->tamano_transporte; // preferido por admin
 
         if (!$transportistaId || !\App\Models\Transportista::where('id', $transportistaId)->exists()) {
             $placeholderT = \App\Models\Transportista::first();
@@ -395,13 +397,17 @@ class EnvioController extends Controller
         }
 
         if (!$vehiculoId || !\App\Models\Vehiculo::where('id', $vehiculoId)->exists()) {
-            $placeholderV = \App\Models\Vehiculo::first();
+            // Crear/obtener vehículo placeholder según tamaño elegido
+            $mapCap = [ 'pequeno' => 700, 'mediano' => 1500, 'grande' => 3000 ];
+            $tipo = $tamano ? ('camion_'.$tamano) : 'camion_mediano';
+            $capacidad = $tamano && isset($mapCap[$tamano]) ? $mapCap[$tamano] : 1500;
+            $placeholderV = \App\Models\Vehiculo::where('tipo', $tipo)->first();
             if (!$placeholderV) {
                 $placeholderV = \App\Models\Vehiculo::create([
                     'transportista_id' => $transportistaId,
-                    'placa' => 'PLACA-000',
-                    'tipo' => 'camion',
-                    'capacidad_kg' => 1000,
+                    'placa' => strtoupper(substr($tipo,0,3)).'-TMP',
+                    'tipo' => $tipo,
+                    'capacidad_kg' => $capacidad,
                     'activo' => true,
                 ]);
             }
@@ -491,18 +497,22 @@ class EnvioController extends Controller
      */
     private function sugerirTransporte($categoria, $pesoTotal)
     {
-        // Lógica simple de sugerencia de transporte
-        if ($categoria === 'alimentos' || $categoria === 'medicinas') {
-            return 'camion_refrigerado';
+        // Nueva lógica con 3 tipos: aislado, ventilado, refrigerado
+        if ($categoria === 'lacteos' || $categoria === 'medicamentos') {
+            return 'refrigerado';
         }
 
-        if ($pesoTotal > 1000) { // Más de 1 tonelada
-            return 'camion_grande';
-        } elseif ($pesoTotal > 500) { // Entre 500kg y 1 tonelada
-            return 'camion_mediano';
-        } else { // Menos de 500kg
-            return 'camion_pequeno';
+        // Para alimentos frescos como frutas/verduras sugerir ventilado si peso moderado/alto
+        if (in_array($categoria, ['frutas','verduras'])) {
+            return $pesoTotal > 200 ? 'ventilado' : 'aislado';
         }
+
+        // Granos y otros por defecto aislado, ventilado si es carga grande
+        if ($categoria === 'granos') {
+            return $pesoTotal > 1000 ? 'ventilado' : 'aislado';
+        }
+
+        return 'aislado';
     }
 }
 

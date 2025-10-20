@@ -51,6 +51,12 @@
                     <div class="col-md-4"><div class="info-box bg-light"><div class="info-box-content"><span class="info-box-text">Unidades</span><span class="info-box-number">{{ $unidadesTotal }}</span></div></div></div>
                     <div class="col-md-4"><div class="info-box bg-success"><div class="info-box-content"><span class="info-box-text">Total</span><span class="info-box-number">Bs {{ number_format($precioTotal,2) }}</span></div></div></div>
                   </div>
+                  @php
+                    $sugerenciaTam = 'Pequeño';
+                    if($unidadesTotal > 500 || $pesoTotal > 1500){ $sugerenciaTam = 'Grande'; }
+                    elseif($unidadesTotal > 200 || $pesoTotal > 700){ $sugerenciaTam = 'Mediano'; }
+                  @endphp
+                  <div class="alert alert-info mt-2"><i class="fas fa-truck mr-1"></i> Sugerencia de tamaño de transporte: <strong>{{ $sugerenciaTam }}</strong> (el administrador tiene la última palabra).</div>
                 </div>
               </div>
             </div>
@@ -130,13 +136,26 @@
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Vehículo</label>
+                            <label>Tamaño de Transporte</label>
+                            <div class="d-flex" style="gap:.5rem">
+                              <label class="btn btn-outline-secondary mb-0"><input type="radio" name="tamano_transporte" value="pequeno" class="mr-1"> Pequeño</label>
+                              <label class="btn btn-outline-secondary mb-0"><input type="radio" name="tamano_transporte" value="mediano" class="mr-1"> Mediano</label>
+                              <label class="btn btn-outline-secondary mb-0"><input type="radio" name="tamano_transporte" value="grande" class="mr-1"> Grande</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Vehículo (opcional)</label>
                             <select class="form-control" name="vehiculo_id">
-                              <option value="">Seleccionar vehículo...</option>
+                              <option value="">Asignar automáticamente según tamaño</option>
                               @foreach(($vehiculos ?? []) as $v)
-                                <option value="{{ $v->id }}">{{ $v->placa ?? ('ID '.$v->id) }}</option>
+                                <option value="{{ $v->id }}">{{ ($v->tipo ?? 'camion') }} — {{ $v->placa ?? ('ID '.$v->id) }}</option>
                               @endforeach
                             </select>
+                            <small class="form-text text-muted">Si no seleccionas uno, se asignará según el tamaño elegido.</small>
                           </div>
                         </div>
                       </div>

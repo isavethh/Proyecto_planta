@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body text-center">
                     @php
                         $collection = isset($envios) ? $envios : collect();
                     @endphp
@@ -60,32 +60,27 @@
                                     $fechaEntrega = $e->fecha_entrega_deseada ? \Illuminate\Support\Carbon::parse($e->fecha_entrega_deseada)->format('d/m/Y H:i') : '-';
                                 @endphp
                                 <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card card-{{ $estadoClass }} card-outline">
+                                    <div class="card card-{{ $estadoClass }} card-outline text-center">
                                         <div class="card-header">
                                             <h5 class="card-title mb-0">
                                                 Envío #{{ $e->id }}
-                                                <span class="badge badge-{{ $estadoClass }} float-right">{{ ucfirst($e->estado) }}</span>
+                                                <span class="badge badge-{{ $estadoClass }} ml-2">{{ ucfirst($e->estado) }}</span>
                                             </h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="row mb-2"><div class="col-6"><strong>Producto:</strong></div><div class="col-6">{{ (is_array($e->items ?? null) && count($e->items)>0) ? (count($e->items) . ' productos') : ($e->producto) }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Categoría:</strong></div><div class="col-6">{{ (is_array($e->items ?? null) && count($e->items)>0) ? 'Múltiples' : ucfirst($e->categoria_producto) }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Unidades:</strong></div><div class="col-6">{{ $unidadesTotal }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Peso Total:</strong></div><div class="col-6">{{ number_format($pesoTotal, 2) }} kg</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Precio Total:</strong></div><div class="col-6">Bs {{ number_format($precioTotal, 2) }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Entrega Deseada:</strong></div><div class="col-6">{{ $fechaEntrega }}</div></div>
-                                            <div class="row mb-2"><div class="col-6"><strong>Transporte:</strong></div><div class="col-6">{{ $transLabel }}</div></div>
-                                            <div class="row mb-3"><div class="col-6"><strong>Fecha:</strong></div><div class="col-6">{{ $fechaCreacion }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Producto:</strong> {{ (is_array($e->items ?? null) && count($e->items)>0) ? (count($e->items) . ' productos') : ($e->producto) }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Categoría:</strong> {{ (is_array($e->items ?? null) && count($e->items)>0) ? 'Múltiples' : ucfirst($e->categoria_producto) }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Unidades:</strong> {{ $unidadesTotal }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Peso Total:</strong> {{ number_format($pesoTotal, 2) }} kg</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Precio Total:</strong> Bs {{ number_format($precioTotal, 2) }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Entrega Deseada:</strong> {{ $fechaEntrega }}</div></div>
+                                            <div class="row mb-2"><div class="col-12"><strong>Transporte:</strong> {{ $transLabel }}</div></div>
+                                            <div class="row mb-3"><div class="col-12"><strong>Fecha:</strong> {{ $fechaCreacion }}</div></div>
                                         </div>
                                         <div class="card-footer">
-                                            <div class="btn-group btn-group-sm w-100">
-                                                <a href="{{ route('envios.documento', $e->id) }}" class="btn btn-success" target="_blank">
-                                                    <i class="fas fa-file-pdf"></i> Documento
-                                                </a>
-                                                <a href="{{ route('envios.mis.documentos') }}" class="btn btn-outline-secondary">
-                                                    <i class="fas fa-list"></i> Mis Documentos
-                                                </a>
-                                            </div>
+                                            <a href="{{ route('envios.show', $e->id) }}" class="btn btn-primary btn-block btn-sm">
+                                                <i class="fas fa-eye"></i> Detalle de Envío
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

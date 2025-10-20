@@ -67,30 +67,27 @@ class Envio extends Model
      */
     const ESTADO_PENDIENTE = 'pendiente';
     const ESTADO_CONFIRMADO = 'confirmado';
+    const ESTADO_EN_PROCESO = 'en_proceso';
     const ESTADO_RECIBIDO = 'recibido';
 
     /**
      * Categorías de productos disponibles
      */
     const CATEGORIAS_PRODUCTO = [
-        'electronica',
-        'ropa',
-        'alimentos',
-        'medicinas',
-        'libros',
-        'otros'
+        'frutas',
+        'verduras',
+        'granos',
+        'lacteos',
+        'medicamentos'
     ];
 
     /**
      * Tipos de transporte disponibles
      */
     const TRANSPORTES_DISPONIBLES = [
-        'camion_pequeno' => 'Camión Pequeño',
-        'camion_mediano' => 'Camión Mediano',
-        'camion_grande' => 'Camión Grande',
-        'camion_refrigerado' => 'Camión Refrigerado',
-        'avion_carga' => 'Avión de Carga',
-        'barco' => 'Barco'
+        'aislado' => 'Transporte Aislado',
+        'ventilado' => 'Transporte Ventilado',
+        'refrigerado' => 'Transporte Refrigerado',
     ];
 
     /**

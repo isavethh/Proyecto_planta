@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 id="dash-nombre">Bienvenido</h4>
+                            <h4 id="dash-nombre">Bienvenido usuario</h4>
                             <p class="text-muted">Sistema de Gestión de Envíos</p>
                         </div>
                         <div class="text-right">
@@ -39,7 +39,7 @@ $(function(){
   // Simula nombre y rol desde sesión mínima
   const nombre = @json(session('user_name')) || 'Usuario';
   const rol = @json(session('user_role')) || 'user';
-  $('#dash-nombre').text(`Bienvenido, ${nombre}`);
+  $('#dash-nombre').text(`Bienvenido usuario`);
   $('#dash-rol').removeClass('badge-info badge-primary').addClass(rol==='admin'?'badge-primary':'badge-info').text(rol==='admin'?'Administrador':'Usuario');
 
   function obtenerEnvios(){ try { return JSON.parse(localStorage.getItem('envios')||'[]'); } catch(e){ return []; } }

@@ -33,6 +33,7 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('/envios/create', [EnvioController::class, 'create'])->name('envios.create');
     Route::post('/envios', [EnvioController::class, 'store'])->name('envios.store');
+    Route::get('/envios/{envio}', [EnvioController::class, 'show'])->name('envios.show');
 
     Route::get('/mis-envios', [EnvioController::class, 'misEnvios'])->name('envios.mis');
 
